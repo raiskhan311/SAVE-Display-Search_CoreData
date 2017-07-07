@@ -23,7 +23,6 @@ class UserViewController: UIViewController,UITableViewDelegate,UITableViewDataSo
         self.tblview_TableView.reloadData()
     }
     
-    
     //MARK:- Table view Datat Source
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{

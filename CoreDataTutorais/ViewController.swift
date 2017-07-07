@@ -20,6 +20,9 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var lbl_ShowSearchResult: UILabel!
     
+    @IBOutlet weak var lbl_dataSaveMessage: UILabel!
+   
+    
     var userArray:[Users] = []
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -39,6 +42,10 @@ class ViewController: UIViewController {
             do
             {
                 try context.save()
+                self.txt_lastname.text = ""
+                self.txt_firstname.text = ""
+                self.lbl_dataSaveMessage.textColor = UIColor.green
+                self.lbl_dataSaveMessage.text = "Data Save Successfully!"
             }
             catch
             {
@@ -47,13 +54,35 @@ class ViewController: UIViewController {
         }
         else
         {
-            print("Please enter firstname and lastname firstly!")
+            self.lbl_dataSaveMessage.textColor = UIColor.red
+            self.lbl_dataSaveMessage.text = "Please Enter first and last NAME !"
         }
-        self.txt_lastname.text = ""
-        self.txt_firstname.text = ""
+
     }
     
     @IBAction func btn_SearchUser(_ sender: Any) {
+        let entityDescription = NSEntityDescription.entity(forEntityName: "Users", in: context)
+        let request :NSFetchRequest<Users> = Users.fetchRequest()
+        request.entity = entityDescription
+        let searchName =  NSPredicate(format: "(firstname = %@)", txt_Searchuser.text!)
+        request.predicate = searchName
+        do
+        {
+            var results = try context.fetch(request as! NSFetchRequest<NSFetchRequestResult>)
+            if results.count > 0 {
+                let matchingName = results[0] as! NSManagedObject
+                let fn = matchingName.value(forKey: "firstname") as! String?
+                let ln = matchingName.value(forKey: "lastname") as! String?
+                lbl_ShowSearchResult.text = "Welcome \(fn!) \(ln!)!"
+            }
+            else{
+                lbl_ShowSearchResult.text = "Not found"
+            }
+        }
+        catch
+        {
+            print("notfound")
+        }
     
     }
     
